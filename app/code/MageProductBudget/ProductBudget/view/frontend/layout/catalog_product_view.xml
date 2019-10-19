@@ -193,5 +193,11 @@
                     name="product_viewed_counter"
                     template="Magento_Catalog::product/view/counter.phtml"/>
         </referenceContainer>
+<!--        <referenceContainer name="product.info.form.content">
+            <block name="product.info.post.requirements"
+                    template="MageProductBudget_ProductBudget::product/view/callforprice.phtml"
+                    after="product.info.addtocart" />
+        </referenceContainer>
+-->
     </body>
 </page>

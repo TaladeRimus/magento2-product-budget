@@ -4,8 +4,6 @@
    <module name="MageProductBudget_ProductBudget" setup_version="0.1.0">
     <sequence>
         <module name="Magento_Catalog"/>
-        <module name="Magento_CatalogWidget"/>
-        <module name="Magento_Widget"/>
     </sequence>
    </module>
 </config>
