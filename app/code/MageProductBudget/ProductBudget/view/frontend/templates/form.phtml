@@ -1,0 +1,164 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// phpcs:disable Magento2.Templates.ThisInTemplate.FoundThis
+
+/**
+ * Product view template
+ *
+ * @var $block \Magento\Catalog\Block\Product\View
+ */
+?>
+<?php $_helper = $this->helper(Magento\Catalog\Helper\Output::class); ?>
+<?php $_product = $block->getProduct(); ?>
+<?php if ($_product->getTypeId() == "budget_product_type"):?>
+<div class="box-tocart">
+    <div class="fieldset">
+        <div class="actions">
+        <!--data-mage-init='{"callforprice": "{}"}' -->
+        <button type="button" class="open-contact-form" id="popupButton" data-toggle="modal"
+        data-target="#myModal"><?php echo __('Call for price')?></button>
+            <?= $block->getChildHtml('', true) ?>
+        </div>
+    </div>
+</div>    
+<div class="modal fade .contact-form-popup" id="myModal" role="dialog" style="display:none;">
+    <div class="modal-dialog">
+    <form class="form contact" id="contact-form">
+    <fieldset class="fieldset">
+        <legend class="legend"><span><?= $block->escapeHtml(__('Call us for pricing')) ?></span></legend><br />
+        <div class="field name required">
+            <label class="label" for="name"><span><?= $block->escapeHtml(__('Name')) ?></span></label>
+            <div class="control">
+                <input name="name" id="name" title="<?= $block->escapeHtmlAttr(__('Name')) ?>" value="<?= $block->escapeHtmlAttr($this->helper(\Magento\Contact\Helper\Data::class)->getPostValue('name') ?: $this->helper(\Magento\Contact\Helper\Data::class)->getUserName()) ?>" class="input-text" type="text" data-validate="{required:true}"/>
+            </div>
+        </div>
+        <div class="field email required">
+            <label class="label" for="email"><span><?= $block->escapeHtml(__('Email')) ?></span></label>
+            <div class="control">
+                <input name="email" id="email" title="<?= $block->escapeHtmlAttr(__('Email')) ?>" value="<?= $block->escapeHtmlAttr($this->helper(\Magento\Contact\Helper\Data::class)->getPostValue('email') ?: $this->helper(\Magento\Contact\Helper\Data::class)->getUserEmail()) ?>" class="input-text" type="email" data-validate="{required:true, 'validate-email':true}"/>
+            </div>
+        </div>
+        <div class="field telephone">
+            <label class="label" for="telephone"><span><?= $block->escapeHtml(__('Phone Number')) ?></span></label>
+            <div class="control">
+                <input name="telephone" id="telephone" title="<?= $block->escapeHtmlAttr(__('Phone Number')) ?>" value="<?= $block->escapeHtmlAttr($this->helper(\Magento\Contact\Helper\Data::class)->getPostValue('telephone')) ?>" class="input-text" type="text" />
+            </div>
+        </div>
+        <div class="field comment required">
+            <label class="label" for="comment"><span><?= $block->escapeHtml(__('Got some questions?')) ?></span></label>
+            <div class="control">
+                <textarea name="comment" id="comment" title="<?= $block->escapeHtmlAttr(__('Got some questions?')) ?>" class="input-text" cols="5" rows="3" data-validate="{required:true}"><?= $block->escapeHtml($this->helper(\Magento\Contact\Helper\Data::class)->getPostValue('comment')) ?></textarea>
+            </div>
+        </div>
+        <?= $block->getChildHtml('form.additional.info') ?>
+    </fieldset>
+    <div class="actions-toolbar">
+        <div class="primary">
+            <input type="hidden" name="hideit" id="hideit" value="" />
+            <button type="button" title="<?= $block->escapeHtmlAttr(__('Submit')) ?>" class="action submit primary">
+                <span><?= $block->escapeHtml(__('Submit')) ?></span>
+            </button>
+        </div>
+    </div>
+    </form>
+    </div>
+</div>
+<?php else :?>
+    <div class="product-add-form">
+        <form data-product-sku="<?= $block->escapeHtml($_product->getSku()) ?>"
+              action="<?= $block->escapeUrl($block->getSubmitUrl($_product)) ?>" method="post"
+              id="product_addtocart_form"<?php if ($_product->getOptions()) :?> enctype="multipart/form-data"<?php endif; ?>>
+            <input type="hidden" name="product" value="<?= (int)$_product->getId() ?>" />
+            <input type="hidden" name="selected_configurable_option" value="" />
+            <input type="hidden" name="related_product" id="related-products-field" value="" />
+            <input type="hidden" name="item"  value="<?= (int)$block->getRequest()->getParam('id') ?>" />
+            <?= $block->getBlockHtml('formkey') ?>
+            <?= $block->getChildHtml('form_top') ?>
+            <?php if (!$block->hasOptions()) :?>
+                <?= $block->getChildHtml('product_info_form_content') ?>
+            <?php else :?>
+                <?php if ($_product->isSaleable() && $block->getOptionsContainer() == 'container1') :?>
+                    <?= $block->getChildChildHtml('options_container') ?>
+                <?php endif;?>
+            <?php endif; ?>
+    
+            <?php if ($_product->isSaleable() && $block->hasOptions() && $block->getOptionsContainer() == 'container2') :?>
+                <?= $block->getChildChildHtml('options_container') ?>
+            <?php endif;?>
+            <?= $block->getChildHtml('form_bottom') ?>
+        </form>
+    </div>
+<?php endif; ?>
+<?php if ($_product->getTypeId() == "budget_product_type"):?>
+<script>
+require(
+        [
+            'jquery',
+            'Magento_Ui/js/modal/modal'
+        ],
+        function($, modal) {
+            jQuery(document).ready(function(){
+                var options = {
+                    type: 'popup',
+                    responsive: true,
+                    innerScroll: true,
+                    title: 'Contact Form',
+                    buttons: [{
+                        text: $.mage.__('Close'),
+                        class: '',
+                        click: function () {
+                            this.closeModal();
+                        }
+                    }]
+                };
+                var openModal = modal(options, $('#myModal'));
+    
+                jQuery('body').on('click', '.open-contact-form', function(){
+                    jQuery('.contact-form-popup').show();
+                    //jQuery('.static-block-message').hide();
+                    jQuery('#myModal').modal('openModal');
+                });
+    
+                jQuery('body').on('click', '.submit', function(e){
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    jQuery.ajax({
+                        type: 'post',
+                        url: '<?php echo $block->getUrl("contact/index/post")?>',
+                        data: jQuery('#contact-form').serialize(),
+                        cache: false,
+                        showLoader: 'true',
+                        success: function(response) {
+                            alert('E-mail sent successfuly!');
+                            jQuery('.contact-form-popup').hide();
+                            //jQuery('.static-block-message').show();
+                        }
+                    });
+                    return false;
+                });
+            });
+        }
+    );
+</script>
+<?php else:?>
+<script>
+    require([
+        'jquery',
+        'priceBox'
+    ], function($){
+        var dataPriceBoxSelector = '[data-role=priceBox]',
+            dataProductIdSelector = '[data-product-id=<?= $block->escapeHtml($_product->getId()) ?>]',
+            priceBoxes = $(dataPriceBoxSelector + dataProductIdSelector);
+
+        priceBoxes = priceBoxes.filter(function(index, elem){
+            return !$(elem).find('.price-from').length;
+        });
+
+        priceBoxes.priceBox({'priceConfig': <?= /* @noEscape */ $block->getJsonConfig() ?>});
+    });
+</script>
+<?php endif; ?>

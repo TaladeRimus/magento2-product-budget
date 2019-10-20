@@ -243,7 +243,10 @@ return [
         'Klarna_Kp' => 1,
         'Magento_PaypalReCaptcha' => 1,
         'MSP_TwoFactorAuth' => 1,
+        'MagePal_GmailSmtpApp' => 1,
         'MageProductBudget_ProductBudget' => 1,
+        'Mageplaza_Core' => 1,
+        'Mageplaza_Smtp' => 1,
         'Temando_Shipping' => 1,
         'Vertex_Tax' => 1,
         'Yotpo_Yotpo' => 1
